@@ -1,0 +1,8 @@
+{
+  "name": "class-participation-system",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/database": "latest"
+  }
+}
