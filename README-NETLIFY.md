@@ -1,46 +1,56 @@
-# Class Participation System v0.7 — Netlify multi-device edition
+# Netlify deployment notes for v0.8
 
-## What changed
+## 1. Database migration
 
-The app is now local-first **and** cloud-synchronised:
+Deploy the repository with the migration in:
 
-- IndexedDB remains the immediate/offline store on each device.
-- Netlify Database (Postgres) stores the shared state.
-- Netlify Function `/api/sync` accepts queued mutations and returns the shared state.
-- A per-site `APP_ACCESS_KEY` protects the sync API.
-- First sync bootstraps the cloud from an existing local v0.6 installation when the server is empty.
-- A new device starts empty and downloads the shared state after the access key is entered.
+`netlify/database/migrations/002-v08-session-sync/migration.sql`
 
-## Deploy to Netlify
+It adds owner-scoped records and the `session_sync_state` table used for session-level conflict resolution.
 
-Connect this repository to the existing Netlify project `class-participation-system` or create a new site from the repository. Netlify will install `@netlify/database`, provision the Postgres database automatically, apply the migration under `netlify/database/migrations`, bundle the function, and publish the static PWA.
+## 2. Account credential
 
-Set `APP_ACCESS_KEY` as a production environment variable before using cloud sync.
+Configure a Netlify environment variable named `ACCOUNT_CREDENTIALS`.
 
-## First device
+Use JSON with one entry per account. For the current personal deployment:
 
-1. Open the deployed URL.
-2. Press **Cloud locked**.
-3. Enter the access key.
-4. Press **Sync now**.
-5. If this browser already contains local data, the first sync uploads the local dataset when the cloud database is empty.
+```json
+[
+  {
+    "owner_id": "personal",
+    "access_key": "REPLACE_WITH_A_LONG_RANDOM_SECRET"
+  }
+]
+```
 
-## Additional devices
+The value shown above is a placeholder. Generate a new strong random secret and never commit the real value to GitHub.
 
-1. Open the same Netlify URL.
-2. Press **Cloud locked**.
-3. Enter the same access key.
-4. Press **Sync now**.
-5. Courses, rosters, layouts, sessions, participation events, attendance, notes, grading and Zoom transcript data are downloaded locally.
+The browser still asks for the cloud access key. That key is stored locally in the browser and sent to `/api/sync` in the `X-App-Key` header.
 
-## Offline behaviour
+`APP_ACCESS_KEY` remains supported temporarily by the server as a v0.7 compatibility fallback. New deployments should use `ACCOUNT_CREDENTIALS`.
 
-A participation tap is always written locally first. Network failure does not block the classroom UI. Mutations stay in `syncQueue` and are retried after reconnection.
+## 3. Deploy
 
-## Conflict policy
+Push or merge the v0.8 branch and trigger a normal Netlify deploy. The updated function is:
 
-Current v0.7 policy is **last server write wins per record**. It is suitable for one professor working across several personal devices. It is not yet intended for multiple people editing the same session simultaneously.
+`netlify/functions/sync.mjs`
 
-## Security note
+The endpoint remains:
 
-Do not put `APP_ACCESS_KEY` in source code. For an institutional deployment, replace this shared-key model with named-user authentication and role-based permissions before onboarding multiple faculty members.
+`/api/sync`
+
+## 4. Verify
+
+After deployment:
+
+1. Open the application and enter the new access key.
+2. Run **Sync now**.
+3. Open **Diagnostics**.
+4. Confirm that uploaded/downloaded session IDs are recorded.
+5. Make different edits on two devices to different sessions and confirm both survive.
+6. Make conflicting edits to the same closed session and confirm the newest session timestamp wins only for that session.
+7. Export the course Excel file and verify the `Interventions`, `Attendance Exceptions` and `Edit History` sheets.
+
+## Security
+
+Do not place credentials in source files, `netlify.toml`, screenshots, example datasets or committed `.env` files. Rotate a credential immediately if it has ever been exposed.
