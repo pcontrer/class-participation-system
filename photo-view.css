@@ -1,0 +1,21 @@
+.roster-view-toggle{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:10px 0}.roster-view-label{font-size:12px;color:var(--muted);font-weight:650}.roster-view-btn{min-height:44px}.responsive-roster-grid{grid-template-columns:repeat(auto-fill,minmax(min(var(--student-min,112px),100%),1fr))}
+
+html[data-roster-view="names"] .responsive-roster-grid{grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr))}
+html[data-roster-view="names"] .responsive-roster-grid .student{min-height:64px;padding:8px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto;column-gap:8px;align-items:center;justify-items:stretch;text-align:left}
+html[data-roster-view="names"] .responsive-roster-grid .student .avatar{display:none}
+html[data-roster-view="names"] .responsive-roster-grid .student .name{font-size:12px;line-height:1.2;min-height:0;text-align:left;display:block;white-space:normal;overflow:visible}
+html[data-roster-view="names"] .responsive-roster-grid .student .count{font-size:18px;text-align:right}
+html[data-roster-view="names"] .responsive-roster-grid .student .draghandle{grid-column:1;grid-row:1;position:static;margin-right:4px}
+html[data-roster-view="names"] .responsive-roster-grid.arranging .student{grid-template-columns:auto minmax(0,1fr) auto}
+html[data-roster-view="names"] .responsive-roster-grid.arranging .student .draghandle{display:block}
+html[data-roster-view="names"] .responsive-roster-grid.arranging .student .name{grid-column:2}
+html[data-roster-view="names"] .responsive-roster-grid.arranging .student .count{grid-column:3}
+
+html[data-roster-view="photos"] .responsive-roster-grid .student{min-height:124px}
+html[data-roster-view="photos"] .responsive-roster-grid .avatar{width:50px;height:50px}
+
+@media(max-width:800px){.sessionbar{align-items:flex-start;flex-direction:column}.sessionbar .toolbar{width:100%}.sessionbar .toolbar .btn{min-height:44px}.roster-view-toggle{justify-content:flex-start}.responsive-roster-grid{grid-template-columns:repeat(auto-fill,minmax(min(132px,100%),1fr));gap:8px}html[data-roster-view="names"] .responsive-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}html[data-roster-view="names"] .responsive-roster-grid .student{min-height:58px}html[data-roster-view="photos"] .responsive-roster-grid .student{min-height:118px}.responsive-roster-grid .student{touch-action:manipulation}}
+
+@media(max-width:520px){.roster-view-toggle{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px}.roster-view-btn{width:100%;padding:8px}.responsive-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}html[data-roster-view="names"] .responsive-roster-grid{grid-template-columns:1fr}html[data-roster-view="names"] .responsive-roster-grid .student{min-height:54px}html[data-roster-view="names"] .responsive-roster-grid .student .name{font-size:13px}html[data-roster-view="photos"] .responsive-roster-grid .student{min-height:116px;padding:7px}html[data-roster-view="photos"] .responsive-roster-grid .avatar{width:52px;height:52px}.nextcall{align-items:flex-start}.nextchip{min-height:36px;display:inline-flex;align-items:center}}
+
+@media(min-width:1200px){html[data-roster-view="photos"] .responsive-roster-grid{grid-template-columns:repeat(auto-fill,minmax(min(128px,100%),1fr))}html[data-roster-view="names"] .responsive-roster-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
